@@ -56,16 +56,17 @@ public class Greedy {;
 					tj[m] = 0;
 				}
 			}
-			rsus.add(new RSU(w,W[w]));
-			rsuQtd--;			
+			rsus.add(new RSU(imutS[w],W[w]));
+			rsuQtd--;	
+			//TODO: fix the value that are added to 's', now it corresponds to the possition in the current S array, not the real one.		
 			s[rsuQtd] = w;
 			S = remove(w,S);
 		}
 		
-//		for(int i : s){
-//			System.out.print(i + " ");
-//		}
-//		System.out.println();
+		for(int i : s){
+			System.out.print(i + " ");
+		}
+		System.out.println();
 
 		return s;
 	}
