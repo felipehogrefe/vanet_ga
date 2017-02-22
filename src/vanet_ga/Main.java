@@ -14,7 +14,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
-			Genetic genetic = new Genetic(200,200,5,0.90,0.10,readMatrix(path[3]));
+			Genetic genetic = new Genetic(200,200,5,30,0.90,0.10,readMatrix(path[3]));
 			genetic.evolve();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -29,15 +29,15 @@ public class Main {
 //		}
 	}
 	
-	private static ArrayList<Integer[]> readMatrix(String path) throws IOException{
-		ArrayList<Integer[]> matrix = new ArrayList<Integer[]>();		
+	private static ArrayList<ArrayList<Integer>> readMatrix(String path) throws IOException{
+		ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();		
 		BufferedReader reader = new BufferedReader(new FileReader(new File(path)));
 		String iLine = "";
 		while((iLine = reader.readLine())!=null){
 			String sData[] = iLine.split(" ");
-			Integer[] data = new Integer[sData.length];
+			ArrayList<Integer> data = new ArrayList<Integer>();
 			for(int i  = 0;i<sData.length;i++){
-				data[i] = Integer.parseInt(sData[i]);
+				data.add(Integer.parseInt(sData[i]));
 			}
 			matrix.add(data);
 		}

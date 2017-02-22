@@ -8,168 +8,132 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Greedy {;
-	private ArrayList<Integer[]> matrix;
-	private static final int k = 5, iTime = 30;
-	private int seed=62;
+	private ArrayList<ArrayList<Integer>> matrix;
+	private int seed=62, k, iTime;
 	private Random random = new Random(seed);
 	
-	public Greedy(ArrayList<Integer[]> m){
+	public Greedy(ArrayList<ArrayList<Integer>> m, int k, int it){
 		this.matrix = m;		
+		this.k = k;
+		this.iTime = it;
 	}
 		
-	public Integer[] generateGreedyIndividual(){
-		int rsuQtd = k;
-		int numVehicles = matrix.get(0).length;
+	public ArrayList<Integer> generateGreedyIndividual(){
+		int rsuQtd = 0;
+		int numVehicles = matrix.get(0).size();
 		int numIntersections = matrix.size();
-		int S[] = initializeIntersections(numIntersections);
-		int imutS[] = initializeIntersections(numIntersections);
+		ArrayList<Integer> S = initializeIntersections(numIntersections);
 		ArrayList<RSU> rsus = new ArrayList<RSU>();
-		Integer s[] = new Integer[k];
-		int tj[] = initializetj(numVehicles);
+		ArrayList<Integer> s = new ArrayList<Integer>();
+		ArrayList<Integer> tj = initializetj(numVehicles);
 		ArrayList<Integer[]> topT = new ArrayList<Integer[]>();
-		
-		while(rsuQtd >= 1){
-			int W[] = populateW(numIntersections);
+		ArrayList<Integer> W = populateW(numIntersections);
+		while(rsuQtd < k){
 			for(int i = 0; i < numVehicles; i++){				
-				int Tj[] = new int[numIntersections];
+				ArrayList<Integer> Tj = new ArrayList<Integer>();
 				for(int j = 0; j < numIntersections; j++){
-					Tj[j] = matrix.get(j)[i];
+					Tj.add(matrix.get(j).get(i));
 				}								
-				int time = tj[i];				
+				int time = tj.get(i);				
 				for(int n = 0; n<numIntersections; n++){					
-					int Tij = Tj[n];
+					int Tij = Tj.get(n);
 					if(Tij > time){
 						if(time < 0){
-							tj[i] = 0;
+							tj.set(i,0);
 							time = 0;
 						}
 						Tij = time;
 					}
-					W[n] = W[n] + Tij;
+					int Wn = W.get(n);
+					W.set(n, Wn+Tij);
 				}
 			}
-			int w = randTopTen(W);
+			int w = randTopTen(W,s);
 			for(int m = 0; m<numVehicles; m++){
-				if(tj[m]>0){
-					tj[m] = tj[m] - matrix.get(w)[m];
+				if(tj.get(m)>0){
+					int aux = tj.get(m);
+					tj.set(m, aux - matrix.get(w).get(w));
 				}else{
-					tj[m] = 0;
+					tj.set(m, 0);
 				}
 			}
-			rsus.add(new RSU(imutS[w],W[w]));
-			rsuQtd--;	
+			s.add(w);
+//			System.out.println("\n"+w+" - "+S.indexOf(w));
+//			for(int i : S){
+//				System.out.print(i + " ");
+//			}
+			//S.set(S.indexOf(w));
+			//rsus.add(new RSU(getRSU(w,s,S.length),W[w]));
 			//TODO: fix the value that are added to 's', now it corresponds to the possition in the current S array, not the real one.		
-			s[rsuQtd] = w;
-			S = remove(w,S);
+			//s[rsuQtd] = getRSU(w,s,S.length);
+			//s.add(removew(S,w));
+			rsuQtd++;	
 		}
 		
-		for(int i : s){
-			System.out.print(i + " ");
-		}
-		System.out.println();
+
+//		System.out.print("------ ");
+//		for(int i = 0;i<s.size();i++){
+//			for(int j = 0;j<s.size();j++){
+//				if(s.get(j)==s.get(i) && i!=j) System.out.print("erro ");
+//			}
+//			System.out.print(""+s.get(i) + " ");
+//		}
+//		System.out.println();
 
 		return s;
 	}
-	
-	private int getRSU(int[] s, int w) {
-		for(int i  = 0;i<s.length;i++){
-			if(i == w) return s[i];
+		
+	private int randTopTen(ArrayList<Integer> W, ArrayList<Integer> s){
+		ArrayList<Integer> array = new ArrayList<Integer>();
+		for(int i = 0; i<W.size();i++){
+			array.add(W.get(i));
 		}
-		for(int i  = 0;i<s.length;i++){
-			if(s[i] == w) return s[i];
-		}
-		return -1;
-	}
-
-	private int[] remove(int toRemove, int[] array){
-		int newArray[] = new int[array.length -1];
-		int i = 0, j = 0;
-		while(i < newArray.length){
-			if(array[i] == toRemove){
-				j++;
-			}
-			newArray[i] = array[j];
-			i++;
-			j++;
-		}
-		return newArray;
-	}
-	
-	private int randTopTen(int[] W){
-		int[] array = new int[W.length];
-		for(int i = 0; i<W.length;i++){
-			array[i] = W[i];
-		}
-		int actual = random.nextInt(10);
 		Integer large[] = new Integer[10];
 		int max = 0, index = 0;
 		for (int j = 0; j < 10; j++) {
-	        max = array[0];
+	        max = array.get(0);
 	        index = 0;
-	        for (int i = 1; i < W.length; i++) {
-	            if (max < array[i]) {
-	                max = array[i];
+	        for (int i = 1; i < W.size(); i++) {
+	            if (max < array.get(i)) {
+	                max = array.get(i);
 	                index = i;
 	            }
 	        }
 	        large[j] = index;
-	        array[index] = Integer.MIN_VALUE;
-	    }		
+	        array.set(index,Integer.MIN_VALUE);
+	    }	
+		int actual = random.nextInt(10);	
+		System.out.println("a:"+large[actual]);
+		for(int i = 0; i<s.size();i++){
+
+			System.out.println(s.get(i) +"-"+ large[actual]);
+			if(s.get(i) == large[actual]) actual = random.nextInt(10);
+		}
+		System.out.println("b:"+large[actual]);
 		return large[actual];
 	}
 	
-	private int[] populateW(int intersections) {
-		int i[] = new int[intersections];
-		for(int j = 0; j<i.length; j++){
-			i[j] = 0;
+	private ArrayList<Integer> populateW(int intersections) {
+		ArrayList<Integer> a = new ArrayList<Integer>(); 
+		for(int j = 0; j<intersections; j++){
+			a.add(0);
 		}
-		return i;
+		return a;
 	}
 
-	private int[] initializetj(int numVehicles) {
-		int i[] = new int[numVehicles];
-		for(int j = 0; j<i.length; j++){
-			i[j] = iTime;
+	private ArrayList<Integer> initializetj(int numVehicles) {
+		ArrayList<Integer> a = new ArrayList<Integer>(); 
+		for(int j = 0; j<numVehicles; j++){
+			a.add(iTime);
 		}
-		return i;
+		return a; 
 	}
 
-	private int[] initializeIntersections(int intersections) {
-		int i[] = new int[intersections];
-		for(int j = 0; j<i.length; j++){
-			i[j] = j;
+	private ArrayList<Integer> initializeIntersections(int intersections) {
+		ArrayList<Integer> a = new ArrayList<Integer>(); 
+		for(int j = 0; j<intersections; j++){
+			a.add(j);
 		}
-		return i;
+		return a;
 	}
-	
-	private int iMax(int[] W){
-		int max = 0;
-		int index = 0;
-		for(int i = 0; i<W.length; i++){
-			if(W[i] > max){
-				max = W[i];
-				index = i;
-			}
-		}
-		return index;
-	}
-	
-	private Integer[] topTen(int[] W){
-		Integer large[] = new Integer[10];
-		int max = 0, index;
-		for (int j = 0; j < 10; j++) {
-	        max = W[0];
-	        index = 0;
-	        for (int i = 1; i < W.length; i++) {
-	            if (max < W[i]) {
-	                max = W[i];
-	                index = i;
-	            }
-	        }
-	        large[j] = max;
-	        W[index] = Integer.MIN_VALUE;
-	    }		
-		return large;
-	}
-
 }
