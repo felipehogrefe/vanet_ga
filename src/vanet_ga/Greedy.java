@@ -49,6 +49,7 @@ public class Greedy {;
 				}
 			}
 			int w = randTopTen(W,s);
+			System.out.print(w + " ");
 			for(int m = 0; m<numVehicles; m++){
 				if(tj.get(m)>0){
 					int aux = tj.get(m);
@@ -71,14 +72,14 @@ public class Greedy {;
 		}
 		
 
-//		System.out.print("------ ");
-//		for(int i = 0;i<s.size();i++){
-//			for(int j = 0;j<s.size();j++){
-//				if(s.get(j)==s.get(i) && i!=j) System.out.print("erro ");
-//			}
-//			System.out.print(""+s.get(i) + " ");
-//		}
-//		System.out.println();
+		System.out.print("---"+W.get(43)+"--- ");
+		for(int i = 0;i<s.size();i++){
+			for(int j = 0;j<s.size();j++){
+				if(s.get(j)==s.get(i) && i!=j) System.out.print("erro ");
+			}
+			System.out.print(""+s.get(i) + " ");
+		}
+		System.out.println();
 
 		return s;
 	}
@@ -103,13 +104,9 @@ public class Greedy {;
 	        array.set(index,Integer.MIN_VALUE);
 	    }	
 		int actual = random.nextInt(10);	
-		System.out.println("a:"+large[actual]);
-		for(int i = 0; i<s.size();i++){
-
-			System.out.println(s.get(i) +"-"+ large[actual]);
-			if(s.get(i) == large[actual]) actual = random.nextInt(10);
+		while(s.indexOf(large[actual])!=-1){
+			actual = random.nextInt(10);
 		}
-		System.out.println("b:"+large[actual]);
 		return large[actual];
 	}
 	
