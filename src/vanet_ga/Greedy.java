@@ -1,9 +1,5 @@
 package vanet_ga;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -11,11 +7,13 @@ public class Greedy {;
 	private ArrayList<ArrayList<Integer>> matrix, original;
 	private int seed=62, k, iTime;
 	private Random random = new Random(seed);
+	private boolean randomIndividual;
 	
-	public Greedy(ArrayList<ArrayList<Integer>> m, int k, int it){
+	public Greedy(ArrayList<ArrayList<Integer>> m, int k, int it, boolean ri){
 		this.original = m;	
 		this.k = k;
 		this.iTime = it;
+		this.randomIndividual=ri;
 	}
 	
 	public ArrayList<Integer> generateGreedyIndividual(){
@@ -25,31 +23,22 @@ public class Greedy {;
 		int numIntersections = matrix.size();
 		ArrayList<Integer> s = new ArrayList<Integer>();
 		ArrayList<Integer> tj = initializetj(numVehicles);
-		ArrayList<Integer> W = populateW(numIntersections);
+	
 		while(rsuQtd < k){
-			for(int i = 0; i < numVehicles; i++){				
-				ArrayList<Integer> Tj = new ArrayList<Integer>();
-				for(int j = 0; j < numIntersections; j++){
-					Tj.add(matrix.get(j).get(i));
-				}								
-				int time = tj.get(i);				
-				for(int n = 0; n<numIntersections; n++){					
-					int Tij = Tj.get(n);
-					if(Tij > time){
-						if(time < 0){
-							tj.set(i,0);
-							time = 0;
-						}
-						Tij = time;
+			ArrayList<Integer> W = new ArrayList<Integer>();	
+			for(int i = 0; i < numIntersections; i++){	
+				int wr = 0;
+				for(int v = 0; v<numVehicles; v++){
+					int vTime = matrix.get(i).get(v);
+					if(vTime > tj.get(v)){
+						vTime = tj.get(v);
 					}
-					int Wn = W.get(n);
-					W.set(n, Wn+Tij);
+					wr += vTime;
 				}
+				W.add(wr);
 			}
-			//at the method 'randTopTen' we ensure that RSUs arent 
-			//being deployed at the same intersections, it does the 
-			//work of lines 7 and 8 of algorithm 1
 			int w = randTopTen(W,s);
+			s.add(w);
 			for(int i = 0; i<numVehicles; i++){
 				if(matrix.get(w).get(i)>=tj.get(i)){
 					tj.set(i, 0);
@@ -59,7 +48,6 @@ public class Greedy {;
 				}
 				matrix.get(w).set(i,0);	
 			}
-			s.add(w);
 			rsuQtd++;	
 		}
 		return s;
@@ -96,22 +84,16 @@ public class Greedy {;
 	        large[j] = index;
 	        array.set(index,Integer.MIN_VALUE);
 	    }	
-		int actual = random.nextInt(10);
-		//in order to ensure that RSUs arent being deployed into the 
-		//same intersections we look at previously deployed RSUs and 
-		//prevent the actual one to be palced at the same intersection:
-		while(s.indexOf(large[actual])!=-1){
-			actual = random.nextInt(10);
+		//set to return large[0] if the individual shouldnt be randomcally generated
+		if(randomIndividual){
+			return large[0];
+		} else {
+			int actual = random.nextInt(10);
+			while(s.indexOf(large[actual])!=-1){
+				actual = random.nextInt(10);
+			}
+			return large[actual];
 		}
-		return large[actual];
-	}
-	
-	private ArrayList<Integer> populateW(int intersections) {
-		ArrayList<Integer> a = new ArrayList<Integer>(); 
-		for(int j = 0; j<intersections; j++){
-			a.add(0);
-		}
-		return a;
 	}
 
 	private ArrayList<Integer> initializetj(int numVehicles) {
