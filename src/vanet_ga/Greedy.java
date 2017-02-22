@@ -8,25 +8,23 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Greedy {;
-	private ArrayList<ArrayList<Integer>> matrix;
+	private ArrayList<ArrayList<Integer>> matrix, original;
 	private int seed=62, k, iTime;
 	private Random random = new Random(seed);
 	
 	public Greedy(ArrayList<ArrayList<Integer>> m, int k, int it){
-		this.matrix = m;		
+		this.original = m;	
 		this.k = k;
 		this.iTime = it;
 	}
-		
+	
 	public ArrayList<Integer> generateGreedyIndividual(){
+		matrix = copyMatrix(original);
 		int rsuQtd = 0;
 		int numVehicles = matrix.get(0).size();
 		int numIntersections = matrix.size();
-		ArrayList<Integer> S = initializeIntersections(numIntersections);
-		ArrayList<RSU> rsus = new ArrayList<RSU>();
 		ArrayList<Integer> s = new ArrayList<Integer>();
 		ArrayList<Integer> tj = initializetj(numVehicles);
-		ArrayList<Integer[]> topT = new ArrayList<Integer[]>();
 		ArrayList<Integer> W = populateW(numIntersections);
 		while(rsuQtd < k){
 			for(int i = 0; i < numVehicles; i++){				
@@ -48,40 +46,35 @@ public class Greedy {;
 					W.set(n, Wn+Tij);
 				}
 			}
+			//at the method 'randTopTen' we ensure that RSUs arent 
+			//being deployed at the same intersections, it does the 
+			//work of lines 7 and 8 of algorithm 1
 			int w = randTopTen(W,s);
-			System.out.print(w + " ");
-			for(int m = 0; m<numVehicles; m++){
-				if(tj.get(m)>0){
-					int aux = tj.get(m);
-					tj.set(m, aux - matrix.get(w).get(w));
+			for(int i = 0; i<numVehicles; i++){
+				if(matrix.get(w).get(i)>=tj.get(i)){
+					tj.set(i, 0);
 				}else{
-					tj.set(m, 0);
+					int aux = tj.get(i);
+					tj.set(i, aux - matrix.get(w).get(i));
 				}
+				matrix.get(w).set(i,0);	
 			}
 			s.add(w);
-//			System.out.println("\n"+w+" - "+S.indexOf(w));
-//			for(int i : S){
-//				System.out.print(i + " ");
-//			}
-			//S.set(S.indexOf(w));
-			//rsus.add(new RSU(getRSU(w,s,S.length),W[w]));
-			//TODO: fix the value that are added to 's', now it corresponds to the possition in the current S array, not the real one.		
-			//s[rsuQtd] = getRSU(w,s,S.length);
-			//s.add(removew(S,w));
 			rsuQtd++;	
 		}
-		
-
-		System.out.print("---"+W.get(43)+"--- ");
-		for(int i = 0;i<s.size();i++){
-			for(int j = 0;j<s.size();j++){
-				if(s.get(j)==s.get(i) && i!=j) System.out.print("erro ");
-			}
-			System.out.print(""+s.get(i) + " ");
-		}
-		System.out.println();
-
 		return s;
+	}
+		
+	private ArrayList<ArrayList<Integer>> copyMatrix(ArrayList<ArrayList<Integer>> m){
+		ArrayList<ArrayList<Integer>> newMatrix = new ArrayList<ArrayList<Integer>>();
+		for(ArrayList<Integer> i : m){
+			ArrayList<Integer> nLine = new ArrayList<Integer>();
+			for(Integer j : i){
+				nLine.add(j);
+			}
+			newMatrix.add(nLine);
+		}			
+		return newMatrix;
 	}
 		
 	private int randTopTen(ArrayList<Integer> W, ArrayList<Integer> s){
@@ -103,7 +96,10 @@ public class Greedy {;
 	        large[j] = index;
 	        array.set(index,Integer.MIN_VALUE);
 	    }	
-		int actual = random.nextInt(10);	
+		int actual = random.nextInt(10);
+		//in order to ensure that RSUs arent being deployed into the 
+		//same intersections we look at previously deployed RSUs and 
+		//prevent the actual one to be palced at the same intersection:
 		while(s.indexOf(large[actual])!=-1){
 			actual = random.nextInt(10);
 		}
@@ -124,13 +120,5 @@ public class Greedy {;
 			a.add(iTime);
 		}
 		return a; 
-	}
-
-	private ArrayList<Integer> initializeIntersections(int intersections) {
-		ArrayList<Integer> a = new ArrayList<Integer>(); 
-		for(int j = 0; j<intersections; j++){
-			a.add(j);
-		}
-		return a;
 	}
 }
