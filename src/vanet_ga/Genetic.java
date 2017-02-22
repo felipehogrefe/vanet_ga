@@ -33,14 +33,14 @@ public class Genetic {
 			population.add(generateRandIndividual(numberOfIntersections,randomGenerator));
 		}
 
-		Greedy greedy = new Greedy(matrix,numberOfRSUs,iTime);
+		Greedy greedy = new Greedy(matrix,numberOfRSUs,iTime,true);
 		for(int i = 0; i<randPopulation;i++){
 			population.add(greedy.generateGreedyIndividual());
 		}
 		
 	}
 	
-	public ArrayList<Integer>generateRandIndividual(int noi, Random rg){
+	public ArrayList<Integer> generateRandIndividual(int noi, Random rg){
 		Random randomGenerator = rg;
 		ArrayList<Integer> individual = new ArrayList<Integer>();
 		for(int i = 0; i<numberOfRSUs; i++){	
