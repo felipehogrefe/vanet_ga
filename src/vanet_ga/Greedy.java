@@ -50,6 +50,10 @@ public class Greedy {;
 			}
 			rsuQtd++;	
 		}
+		for(int i : s){
+			System.out.print(i +" ");
+		}
+		System.out.println();
 		return s;
 	}
 		
@@ -83,9 +87,9 @@ public class Greedy {;
 	        }
 	        large[j] = index;
 	        array.set(index,Integer.MIN_VALUE);
-	    }	
+	    }			
 		//set to return large[0] if the individual shouldnt be randomcally generated
-		if(randomIndividual){
+		if(!randomIndividual){
 			return large[0];
 		} else {
 			int actual = random.nextInt(10);

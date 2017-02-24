@@ -6,7 +6,7 @@ import java.util.Random;
 public class Genetic {
 	private static final int seed = 10;
 	
-	private int numberOfGenerations, populationsSize, numberOfRSUs, iTime;
+	private int numberOfGenerations, populationsSize, numberOfRSUs, iTime, numberOfIntersections, numberOfVehicles;
 	private Double crossoverProb, mutationProb;
 	private ArrayList<ArrayList<Integer>> population;
 	private ArrayList<ArrayList<Integer>> matrix;
@@ -19,15 +19,17 @@ public class Genetic {
 		this.crossoverProb = cp;
 		this.mutationProb = mp;
 		this.matrix = m;
+		
+		initPopulation();
 	}
-	
-	public void evolve(){
+
+	private void initPopulation() {
 		Random randomGenerator = new Random(seed);
 		population = new ArrayList<ArrayList<Integer>>();
 		int greedyPopulation = populationsSize/2;
 		int randPopulation = populationsSize - greedyPopulation;
-		int numberOfIntersections = matrix.size();
-		int numberOfVehicles = matrix.get(0).size();
+		numberOfIntersections = matrix.size();
+		numberOfVehicles = matrix.get(0).size();
 		
 		for(int i = 0; i<randPopulation;i++){
 			population.add(generateRandIndividual(numberOfIntersections,randomGenerator));
@@ -37,6 +39,10 @@ public class Genetic {
 		for(int i = 0; i<randPopulation;i++){
 			population.add(greedy.generateGreedyIndividual());
 		}
+	}
+	
+	public void evolve(){
+		
 		
 	}
 	
