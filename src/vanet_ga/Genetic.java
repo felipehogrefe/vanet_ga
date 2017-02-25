@@ -10,6 +10,7 @@ public class Genetic {
 	private double crossoverProb, mutationProb;
 	private ArrayList<Individual> population;
 	private ArrayList<ArrayList<Integer>> matrix;
+	private Random randomGenerator;
 
 	public Genetic(int ng, int ps, int nor, int it, Double cp, Double mp, ArrayList<ArrayList<Integer>> m) {
 		this.numberOfGenerations = ng;
@@ -19,12 +20,12 @@ public class Genetic {
 		this.crossoverProb = cp;
 		this.mutationProb = mp;
 		this.matrix = m;
+		this.randomGenerator = new Random(seed);
 
 		initPopulation();
 	}
 
 	private void initPopulation() {
-		Random randomGenerator = new Random(seed);
 		population = new ArrayList<Individual>();
 		int greedyPopulation = populationsSize / 2;
 		int randPopulation = populationsSize - greedyPopulation;
@@ -32,7 +33,7 @@ public class Genetic {
 		numberOfVehicles = matrix.get(0).size();
 
 		for (int i = 0; i < randPopulation; i++) {
-			population.add(generateRandIndividual(numberOfIntersections, randomGenerator));
+			population.add(generateRandIndividual(numberOfIntersections));
 		}
 
 		Greedy greedy = new Greedy(matrix, numberOfRSUs, iTime, true);
@@ -47,16 +48,48 @@ public class Genetic {
 		Individual fittest;
 
 		while (numberOfGenerations > 0) {
+			//calculate the fitness of each individual
 			popFitness = populationFitness();
 			
-			//get the fittest for elitsm:
-			fittest = getFittest(popFitness);	
+			//start the next generation
+			ArrayList<Individual> newPopulation = new ArrayList<Individual>();
 			
-			System.out.println(calcFitness(fittest));
+			//get the fittest for elitsm:
+			fittest = getFittest(popFitness);
+			newPopulation.add(fittest);
+			population.remove(fittest);
+			
+			//in order to complete the first half of the new population
+			//we realizae a tournament selection
+			while(newPopulation.size()<(populationsSize/2)){
+				Individual newInd = tournamentSelection(popFitness);
+				System.out.println(newPopulation.size());
+				newPopulation.add(newInd);
+			}
+			
+			while(newPopulation.size()<populationsSize){
+				newPopulation.add(generateRandIndividual(numberOfIntersections));
+			}
+			
+			population = newPopulation;
 			
 			numberOfGenerations--;
 		}
 	}
+	
+	public Individual tournamentSelection(ArrayList<Double> popFitness){
+		int index1 = randomGenerator.nextInt(population.size());
+		Individual ind1 = population.get(index1);
+		population.remove(index1);
+		
+		int index2 = randomGenerator.nextInt(population.size());		
+		Individual ind2 = population.get(index2);	
+		population.remove(index2);
+				
+		return (calcFitness(ind1)>calcFitness(ind2)?ind1:ind2);
+	}
+	
+	
 	
 	public Individual getFittest(ArrayList<Double> popFitness){
 		int indexMax = 0;
@@ -68,21 +101,20 @@ public class Genetic {
 		return population.get(indexMax);		
 	}
 
-	public Individual generateRandIndividual(int noi, Random rg) {
-		Random randomGenerator = rg;
+	public Individual generateRandIndividual(int noi) {
 		Individual individual = new Individual();
 		for (int i = 0; i < numberOfRSUs; i++) {
-			individual.add(insert(randomGenerator, individual, noi));
+			individual.add(insert(individual, noi));
 		}
 
 		return individual;
 	}
 
-	public Integer insert(Random rg, Individual ind, int noi) {
-		int j = rg.nextInt(noi - 1);
+	public Integer insert(Individual ind, int noi) {
+		int j = randomGenerator.nextInt(noi - 1);
 		for(int i =0;i<ind.size();i++){
 			if (ind.get(i) == j)
-				return insert(rg, ind, noi);
+				return insert(ind, noi);
 		}
 		return j;
 	}
