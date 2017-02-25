@@ -16,12 +16,12 @@ public class Greedy {;
 		this.randomIndividual=ri;
 	}
 	
-	public ArrayList<Integer> generateGreedyIndividual(){
+	public Individual generateGreedyIndividual(){
 		matrix = copyMatrix(original);
 		int rsuQtd = 0;
 		int numVehicles = matrix.get(0).size();
 		int numIntersections = matrix.size();
-		ArrayList<Integer> s = new ArrayList<Integer>();
+		Individual ind = new Individual();
 		ArrayList<Integer> tj = initializetj(numVehicles);
 	
 		while(rsuQtd < k){
@@ -37,8 +37,8 @@ public class Greedy {;
 				}
 				W.add(wr);
 			}
-			int w = randTopTen(W,s);
-			s.add(w);
+			int w = randTopTen(W,ind);
+			ind.add(w);
 			for(int i = 0; i<numVehicles; i++){
 				if(matrix.get(w).get(i)>=tj.get(i)){
 					tj.set(i, 0);
@@ -50,11 +50,12 @@ public class Greedy {;
 			}
 			rsuQtd++;	
 		}
-		for(int i : s){
-			System.out.print(i +" ");
-		}
-		System.out.println();
-		return s;
+		
+//		for(int i : s){
+//			System.out.print(i +" ");
+//		}
+//		System.out.println();
+		return ind;
 	}
 		
 	private ArrayList<ArrayList<Integer>> copyMatrix(ArrayList<ArrayList<Integer>> m){
@@ -69,7 +70,7 @@ public class Greedy {;
 		return newMatrix;
 	}
 		
-	private int randTopTen(ArrayList<Integer> W, ArrayList<Integer> s){
+	private int randTopTen(ArrayList<Integer> W, Individual ind){
 		ArrayList<Integer> array = new ArrayList<Integer>();
 		for(int i = 0; i<W.size();i++){
 			array.add(W.get(i));
@@ -93,7 +94,7 @@ public class Greedy {;
 			return large[0];
 		} else {
 			int actual = random.nextInt(10);
-			while(s.indexOf(large[actual])!=-1){
+			while(ind.indexOf(large[actual])!=-1){
 				actual = random.nextInt(10);
 			}
 			return large[actual];

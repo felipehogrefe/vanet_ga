@@ -8,11 +8,10 @@ import java.util.ArrayList;
 
 public class Main {
 	private static final String[] path = {"E0-T-60s-4CP","E1-T-60s-4CP","E2-T-60s-4CP","E3-T-60s-4CP"};
-	private static final int seed = 62;
 	
 
 	public static void main(String[] args) {
-
+		long millis = System.nanoTime();
 		try {
 			Genetic genetic = new Genetic(200,200,5,30,0.90,0.10,readMatrix(path[3]));
 			genetic.evolve();
@@ -20,13 +19,9 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		for(int i = 0; i<path.length;i++){
-//			System.out.println("Scene: "+path[i]);
-//			Greedy alg = new Greedy(path[i], seed);
-//			alg.runGreedy();	
-//			System.out.println("-------------------------");		
-//		}
+		millis = System.nanoTime() - millis;
+        millis=millis/1000000;
+        System.out.println(millis);
 	}
 	
 	private static ArrayList<ArrayList<Integer>> readMatrix(String path) throws IOException{
@@ -41,6 +36,7 @@ public class Main {
 			}
 			matrix.add(data);
 		}
+		reader.close();
 		return matrix;
 	}
 }
