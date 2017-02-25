@@ -12,6 +12,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		long millis = System.nanoTime();
+        System.out.println("alg. start");
 		try {
 			Genetic genetic = new Genetic(200,200,5,30,0.90,0.10,readMatrix(path[3]));
 			genetic.evolve();
@@ -21,7 +22,7 @@ public class Main {
 		}
 		millis = System.nanoTime() - millis;
         millis=millis/1000000;
-        System.out.println(millis);
+        System.out.println("time: "+millis);
 	}
 	
 	private static ArrayList<ArrayList<Integer>> readMatrix(String path) throws IOException{

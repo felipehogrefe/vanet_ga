@@ -63,10 +63,10 @@ public class Genetic {
 			//we realizae a tournament selection
 			while(newPopulation.size()<(populationsSize/2)){
 				Individual newInd = tournamentSelection(popFitness);
-				System.out.println(newPopulation.size());
 				newPopulation.add(newInd);
 			}
 			
+			//
 			while(newPopulation.size()<populationsSize){
 				newPopulation.add(generateRandIndividual(numberOfIntersections));
 			}
@@ -86,7 +86,7 @@ public class Genetic {
 		Individual ind2 = population.get(index2);	
 		population.remove(index2);
 				
-		return (calcFitness(ind1)>calcFitness(ind2)?ind1:ind2);
+		return ind1.getBetter(ind2, numberOfVehicles, numberOfRSUs, matrix, iTime);
 	}
 	
 	
@@ -127,25 +127,11 @@ public class Genetic {
 		ArrayList<Double> fitness = new ArrayList<Double>();
 
 		for (int k = 0; k < population.size(); k++) {
-			fitness.add(calcFitness(population.get(k)));
+			fitness.add(population.get(k).calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime));
 		}
 		
 
 		return fitness;
 	}
 
-	public Double calcFitness(Individual ind) {
-		
-		int coverage = 0;
-		for (int j = 0; j < numberOfVehicles; j++) {
-			int sum = 0;
-			for (int i = 0; i < numberOfRSUs; i++) {
-				sum += matrix.get(ind.get(i)).get(j);
-			}
-			if (sum >= iTime)
-				coverage++;
-		}
-
-		return (double) coverage*100 / numberOfVehicles;
-	}
 }
