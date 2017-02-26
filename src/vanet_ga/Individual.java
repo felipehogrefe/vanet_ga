@@ -9,6 +9,16 @@ public class Individual{
 	public Individual(){
 		this.rsus = new ArrayList<Integer>();
 	}
+	
+	public void mutate(double probability, Random rg, int nIntersections){
+		if(randMutation){
+			mutateRandom(probability,rg,nIntersections);
+		}else{
+			mutateWorstGen(probability,rg,nIntersections);
+		}
+		
+	}
+	
 	public void mutateRandom(double probability, Random rg, int nIntersections){
 		int nRsus = rsus.size();
 		if(rg.nextDouble()>probability){
@@ -19,15 +29,6 @@ public class Individual{
 			}
 			set(mutatedGen,newGen);
 		}
-	}
-	
-	public void mutate(double probability, Random rg, int nIntersections){
-		if(randMutation){
-			mutateRandom(probability,rg,nIntersections);
-		}else{
-			mutateWorstGen(probability,rg,nIntersections);
-		}
-		
 	}
 	
 	public void mutateWorstGen(double probability, Random rg, int nIntersections ){
