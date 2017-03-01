@@ -50,6 +50,7 @@ public class Genetic {
 		Individual fittest;
 
 		while (numberOfGenerations > 0) {
+			System.out.println(numberOfGenerations);
 			//calculate the fitness of each individual
 			popFitness = populationFitness();
 			
@@ -58,7 +59,7 @@ public class Genetic {
 			
 			//get the fittest for elitsm:
 			fittest = getFittest(popFitness);
-			fittest.print();
+			fittest.print();System.out.println("--");
 			newPopulation.add(fittest);
 			
 			//in order to fill the first half of the new population
@@ -76,10 +77,12 @@ public class Genetic {
 				ind.mutate(mutationProb, randomGenerator, numberOfIntersections);
 				newPopulation.add(ind);
 			}
-			
-			
-			
+		
 			population = newPopulation;
+			
+			for(Individual ind : population){
+				ind.print();
+			}
 			
 			numberOfGenerations--;
 		}
