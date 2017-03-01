@@ -12,9 +12,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		long millis = System.nanoTime();
-        System.out.println("alg. start");
 		try {
-			Genetic genetic = new Genetic(50,20,5,30,0.90,0.10,readMatrix(path[3]));
+			//nGenerations, popSize, nRsus, time, crossProb, mutProb, matrix
+			Genetic genetic = new Genetic(200,200,5,30,0.90,0.10,readMatrix(path[3]));
 			genetic.evolve();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -26,6 +26,7 @@ public class Main {
 	}
 	
 	private static ArrayList<ArrayList<Integer>> readMatrix(String path) throws IOException{
+		System.out.print("reading matrix...");
 		ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();		
 		BufferedReader reader = new BufferedReader(new FileReader(new File(path)));
 		String iLine = "";
@@ -38,6 +39,7 @@ public class Main {
 			matrix.add(data);
 		}
 		reader.close();
+		System.out.println(" done");
 		return matrix;
 	}
 }

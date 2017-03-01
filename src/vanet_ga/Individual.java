@@ -21,13 +21,24 @@ public class Individual{
 	
 	public void mutateRandom(double probability, Random rg, int nIntersections){
 		int nRsus = rsus.size();
-		if(rg.nextDouble()>probability){
+		double mutate = rg.nextDouble();
+		if(mutate<probability){
 			int mutatedGen = rg.nextInt(nRsus);
 			int newGen = rg.nextInt(nIntersections);
 			while(contains(newGen)){
 				newGen = rg.nextInt(nIntersections);
 			}
+
 			set(mutatedGen,newGen);
+		}
+		
+	}
+	
+	public void check(){
+		for(int i = 0; i<rsus.size();i++){
+			for(int j = 0; j<rsus.size();j++){
+				if(rsus.get(i)==rsus.get(j)&&i!=j) print();
+			}
 		}
 	}
 	
@@ -42,28 +53,40 @@ public class Individual{
 	 * @param crossPoint
 	 * @return
 	 */
-	public Individual generateChildOPC(Individual ind2, int crossPoint){
+	public Individual generateChildOPC(Individual ind2, int crossPoint, int nIntersections, Random rg){
 		//TODO correct insertion of same gene
+
 		Individual child = new Individual();
 		int rsusSize = this.rsus.size();
 		for(int i = 0;i<rsusSize;i++){
 			if(i<=crossPoint){
 				//before the crosspoint we add the genes from individual 1 
-				int newGen = this.get(i);
-				if(child.contains(newGen)){
-					newGen = ind2.get(i);
+				int newGen = this.get(i),j=0;
+				while(child.contains(newGen)&&j<rsusSize){
+					newGen = ind2.get(j);
+					j++;
 				}
+				newGen = correctGenRand(child, newGen, nIntersections, rg);
 				child.add(newGen);
 			}else{
 				//after the crosspoint we add the genes from individual 2 
-				int newGen = ind2.get(i);
-				if(child.contains(newGen)){
-					newGen = this.get(i);
+				int newGen = ind2.get(i),j=i;
+				while(child.contains(newGen)&&j<rsusSize){
+					newGen = this.get(j);
+					j++;
 				}
+				newGen = correctGenRand(child, newGen, nIntersections, rg);
 				child.add(newGen);
 			}
 		}
 		return child;
+	}
+
+	private int correctGenRand(Individual child, int newGen, int nIntersections, Random rg) {
+		while(child.contains(newGen)){
+			newGen=rg.nextInt(nIntersections);
+		}
+		return newGen;
 	}
 	
 	public Individual generateChildFO(Individual ind2, int crossPoint){
@@ -98,19 +121,12 @@ public class Individual{
 		return (double) coverage*100 / numberOfVehicles;
 	}
 	
-	public Individual getBetter(Individual ind2, int numberOfVehicles, int numberOfRSUs, ArrayList<ArrayList<Integer>> matrix, int iTime){
-		System.out.println("better");
-		System.out.println(this.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime) + " - "+this);
-
-		System.out.println(ind2.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime)+ " - "+ind2);
-		
-		System.out.println((this.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime))>ind2.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime)?this:ind2);
-		
+	public Individual getBetter(Individual ind2, int numberOfVehicles, int numberOfRSUs, ArrayList<ArrayList<Integer>> matrix, int iTime){		
 		return (this.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime))>ind2.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime)?this:ind2;
 	}
 	
 	public boolean contains(int i){
-		return rsus.indexOf(i)>0;
+		return rsus.indexOf(i)>=0;
 	}
 	
 	public void print(){

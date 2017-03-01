@@ -26,6 +26,7 @@ public class Genetic {
 	}
 
 	private void initPopulation() {
+		System.out.print("initializing population...");
 		population = new ArrayList<Individual>();
 		int greedyPopulation = populationsSize / 2;
 		int randPopulation = populationsSize - greedyPopulation;
@@ -37,18 +38,18 @@ public class Genetic {
 		}
 
 		Greedy greedy = new Greedy(matrix, numberOfRSUs, iTime, true);
-		for (int i = 0; i < randPopulation; i++) {
+		for (int i = 0; i < greedyPopulation; i++) {
 			population.add(greedy.generateGreedyIndividual());
 		}
+		System.out.println(" done");
 	}
 
 	public void evolve() {
-		
+		System.out.println("evolving...");
 		ArrayList<Double> popFitness;
 		Individual fittest;
 
 		while (numberOfGenerations > 0) {
-			System.out.println(numberOfGenerations);
 			//calculate the fitness of each individual
 			popFitness = populationFitness();
 			
@@ -57,8 +58,8 @@ public class Genetic {
 			
 			//get the fittest for elitsm:
 			fittest = getFittest(popFitness);
+			fittest.print();
 			newPopulation.add(fittest);
-			population.remove(fittest);
 			
 			//in order to fill the first half of the new population
 			//we realizae a tournament selection
@@ -68,12 +69,15 @@ public class Genetic {
 			}
 			
 			//here we do crossovers to fullfil the population
-			crossover(newPopulation);
+			ArrayList<Individual> childs = crossover(newPopulation);
 			
-			//the last step is to mutate the population
-			for(Individual ind : newPopulation){
+			//in the last step we mutate childs	
+			for(Individual ind : childs){
 				ind.mutate(mutationProb, randomGenerator, numberOfIntersections);
+				newPopulation.add(ind);
 			}
+			
+			
 			
 			population = newPopulation;
 			
@@ -81,34 +85,34 @@ public class Genetic {
 		}
 	}
 	
-	public void crossover(ArrayList<Individual> curPopulation){
+	public ArrayList<Individual> crossover(ArrayList<Individual> curPopulation){
 		ArrayList<Individual> childs = new ArrayList<Individual>();
 		int curPopSize = curPopulation.size();
 		int childsSize = populationsSize-curPopulation.size();
 		while(childs.size()<childsSize){
 			//checks if there will be a crossover interaction
-			if(randomGenerator.nextDouble()>crossoverProb){
-				Individual ind1 = curPopulation.get(randomGenerator.nextInt(curPopSize));
-				Individual ind2 = curPopulation.get(randomGenerator.nextInt(curPopSize));
-				while(ind1==ind2){
-					ind2 = curPopulation.get(randomGenerator.nextInt(curPopSize));
+			if(randomGenerator.nextDouble()<crossoverProb){
+				int ind1index = randomGenerator.nextInt(curPopSize);
+				Individual ind1 = curPopulation.get(ind1index);
+				int ind2index = randomGenerator.nextInt(curPopSize);
+				while(ind1index==ind2index){
+					ind2index = randomGenerator.nextInt(curPopSize);
 				}
+				Individual ind2 = curPopulation.get(ind2index);
 				
 				//TODO the crossover point is completely random?
 				int crossPoint = randomGenerator.nextInt(numberOfRSUs);
 				
 				//generate and add the childs
-				Individual child1 = ind1.generateChildOPC(ind2, crossPoint);
+				Individual child1 = ind1.generateChildOPC(ind2, crossPoint,numberOfIntersections,randomGenerator);
 				//child1.print();
-				Individual child2 = ind2.generateChildOPC(ind1, crossPoint);	
+				Individual child2 = ind2.generateChildOPC(ind1, crossPoint,numberOfIntersections,randomGenerator);	
 				//child2.print();			
 				childs.add(child1);
 				childs.add(child2);
 			}	
 		}
-		for(Individual ind : childs){
-			curPopulation.add(ind);
-		}
+		return childs;
 	}
 	
 	public Individual tournamentSelection(ArrayList<Double> popFitness){
@@ -166,7 +170,7 @@ public class Genetic {
 		//	System.out.print(f+" ");
 			fit +=f;
 		}
-		System.out.println(fit);
+	//	System.out.println(fit);
 		return fitness;
 	}
 
