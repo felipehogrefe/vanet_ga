@@ -14,7 +14,7 @@ public class Main {
 		long millis = System.nanoTime();
         System.out.println("alg. start");
 		try {
-			Genetic genetic = new Genetic(200,200,5,30,0.90,0.10,readMatrix(path[3]));
+			Genetic genetic = new Genetic(50,20,5,30,0.90,0.10,readMatrix(path[3]));
 			genetic.evolve();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
