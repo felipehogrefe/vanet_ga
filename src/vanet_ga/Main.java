@@ -14,7 +14,7 @@ public class Main {
 		long millis = System.nanoTime();
 		try {
 			//nGenerations, popSize, nRsus, time, crossProb, mutProb, matrix
-			Genetic genetic = new Genetic(5,100,5,30,0.90,0.10,readMatrix(path[3]));
+			Genetic genetic = new Genetic(100,200,25,30,0.80,0.25,readMatrix(path[3]));
 			genetic.evolve();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

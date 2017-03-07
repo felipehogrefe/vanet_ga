@@ -5,15 +5,16 @@ import java.util.Random;
 
 public class Greedy {;
 	private ArrayList<ArrayList<Integer>> matrix, original;
-	private int seed=62, k, iTime;
-	private Random random = new Random(seed);
+	private int k, iTime;
+	private Random random;
 	private boolean randomIndividual;
 	
-	public Greedy(ArrayList<ArrayList<Integer>> m, int k, int it, boolean ri){
+	public Greedy(ArrayList<ArrayList<Integer>> m, int k, int it, boolean ri, Random r){
 		this.original = m;	
 		this.k = k;
 		this.iTime = it;
 		this.randomIndividual=ri;
+		this.random = r;
 	}
 	
 	public Individual generateGreedyIndividual(){
@@ -50,11 +51,6 @@ public class Greedy {;
 			}
 			rsuQtd++;	
 		}
-		
-//		for(int i : s){
-//			System.out.print(i +" ");
-//		}
-//		System.out.println();
 		return ind;
 	}
 		
@@ -90,14 +86,15 @@ public class Greedy {;
 	        array.set(index,Integer.MIN_VALUE);
 	    }			
 		//set to return large[0] if the individual shouldnt be randomcally generated
-		if(!randomIndividual){
-			return large[0];
-		} else {
+		if(randomIndividual){
 			int actual = random.nextInt(10);
 			while(ind.indexOf(large[actual])!=-1){
 				actual = random.nextInt(10);
 			}
 			return large[actual];
+			
+		} else {
+			return large[0];
 		}
 	}
 

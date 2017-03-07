@@ -37,7 +37,7 @@ public class Genetic {
 			population.add(generateRandIndividual(numberOfIntersections));
 		}
 
-		Greedy greedy = new Greedy(matrix, numberOfRSUs, iTime, true);
+		Greedy greedy = new Greedy(matrix, numberOfRSUs, iTime, true, randomGenerator);
 		for (int i = 0; i < greedyPopulation; i++) {
 			population.add(greedy.generateGreedyIndividual());
 		}
@@ -50,7 +50,6 @@ public class Genetic {
 		Individual fittest;
 
 		while (numberOfGenerations > 0) {
-			System.out.println(numberOfGenerations);
 			//calculate the fitness of each individual
 			popFitness = populationFitness();
 			
@@ -59,7 +58,8 @@ public class Genetic {
 			
 			//get the fittest for elitsm:
 			fittest = getFittest(popFitness);
-			fittest.print();System.out.println("--");
+			//fittest.print();
+			System.out.println(101-numberOfGenerations+" "+fittest.calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime));
 			newPopulation.add(fittest);
 			
 			//in order to fill the first half of the new population
@@ -80,9 +80,10 @@ public class Genetic {
 		
 			population = newPopulation;
 			
-			for(Individual ind : population){
-				ind.print();
-			}
+//			for(Individual ind : population){
+//				ind.print();
+//			}
+			
 			
 			numberOfGenerations--;
 		}
@@ -109,7 +110,7 @@ public class Genetic {
 				//generate and add the childs
 				Individual child1 = ind1.generateChildOPC(ind2, crossPoint,numberOfIntersections,randomGenerator);
 				//child1.print();
-				Individual child2 = ind2.generateChildOPC(ind1, crossPoint,numberOfIntersections,randomGenerator);	
+				Individual child2 = ind1.generateChildOPC(ind2, numberOfRSUs-crossPoint,numberOfIntersections,randomGenerator);	
 				//child2.print();			
 				childs.add(child1);
 				childs.add(child2);
@@ -170,7 +171,7 @@ public class Genetic {
 		for (int k = 0; k < population.size(); k++) {
 			Double f = population.get(k).calcFitness(numberOfVehicles, numberOfRSUs, matrix, iTime);
 			fitness.add(f);
-		//	System.out.print(f+" ");
+			//System.out.print(f+" ");
 			fit +=f;
 		}
 	//	System.out.println(fit);

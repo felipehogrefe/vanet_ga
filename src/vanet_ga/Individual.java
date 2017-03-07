@@ -117,8 +117,7 @@ public class Individual{
 			if (sum >= iTime)
 				coverage++;
 		}
-
-		return (double) coverage*100 / numberOfVehicles;
+		return ((double) coverage*100) / numberOfVehicles;
 	}
 	
 	public Individual getBetter(Individual ind2, int numberOfVehicles, int numberOfRSUs, ArrayList<ArrayList<Integer>> matrix, int iTime){		
