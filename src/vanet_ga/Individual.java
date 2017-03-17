@@ -47,14 +47,13 @@ public class Individual{
 	}
 	
 	/**
-	 * generates given a point we get genes from one indivual
-	 *  before that point and from the other after that point
+	 * given a point, we get genes from one indivual
+	 * before that point and from the other after that point
 	 * @param ind2
 	 * @param crossPoint
 	 * @return
 	 */
 	public Individual generateChildOPC(Individual ind2, int crossPoint, int nIntersections, Random rg){
-		//TODO correct insertion of same gene
 
 		Individual child = new Individual();
 		int rsusSize = this.rsus.size();
